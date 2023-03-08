@@ -1,77 +1,47 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Formulario Actividad 180</title>
+	<title>Formulario de Vendedor</title>
 	<link rel="stylesheet" href="style.css">
 </head>
 <body>
-	
-	<h1>Formulario de Pedidos</h1>
-	<label>Nombre del vendedor:</label>
-	<input type="text" id="nombre-vendedor"><br>
-	<label>Cantidad de hamburguesas:</label>
-	<input type="number" id="cantidad-hamburguesas"><br>
-	<button onclick="generarDatos()">Generar pedidos</button>
+	<label for="nombre">Nombre del vendedor:</label>
+	<input type="text" id="nombre"><br><br>
+
+	<label for="ventas">Cantidad de ventas:</label>
+	<input type="number" id="ventas"><br><br>
+
+	<div id="detalles-venta">
+		<!-- Aquí se agregarán los detalles de venta -->
+	</div>
+
+	<button onclick="generarCSV()">Generar archivo CSV</button>
 
 	<script>
-		let vendedor = "";
-		let numPedido = 1;
-		let pedidos = "";
+		function generarCSV() {
+			// Obtener los valores del formulario
+			var nombre = document.getElementById("nombre").value;
+			var ventas = parseInt(document.getElementById("ventas").value);
+			var detalles = "";
 
-		function generarDatos() {
-			const nombreVendedor = document.getElementById("nombre-vendedor").value.trim();
-			const cantidadHamburguesas = parseInt(document.getElementById("cantidad-hamburguesas").value.trim());
-
-			if (nombreVendedor === "") {
-				alert("Por favor, ingrese el nombre del vendedor.");
-				return;
+			// Generar los detalles de venta
+			for (var i = 0; i < ventas; i++) {
+				detalles += prompt("Ingrese el nombre del cliente #" + (i + 1) + ":") + ",";
+				detalles += prompt("Ingrese el número telefónico del cliente #" + (i + 1) + ":") + ",";
+				detalles += prompt("Ingrese el lugar de entrega del cliente #" + (i + 1) + ":") + "\n";
 			}
 
-			if (isNaN(cantidadHamburguesas) || cantidadHamburguesas < 1) {
-				alert("Por favor, ingrese una cantidad de hamburguesas válida.");
-				return;
-			}
+			// Generar el archivo CSV
+			var csv = "Nombre del vendedor,Cantidad de ventas\n";
+			csv += nombre + "," + ventas + "\n\n";
+			csv += "Detalles de venta,Número telefónico,Lugar de entrega\n" + detalles;
 
-			if (vendedor === "") {
-				vendedor = nombreVendedor;
-			} else if (vendedor !== nombreVendedor) {
-				alert("El nombre del vendedor no coincide con el registrado previamente.");
-				return;
-			}
-
-			for (let i = 1; i <= cantidadHamburguesas; i++) {
-				const nombrePedido = prompt(`Ingrese el nombre del cliente para el pedido ${numPedido}`);
-				if (nombrePedido === null) {
-					break;
-				}
-
-				const numeroPedido = prompt(`Ingrese el número de telefono de ${nombrePedido}`);
-				if (numeroPedido === null) {
-					break;
-				}
-
-				const lugarPedido = prompt(`Ingrese el lugar de entrega para ${nombrePedido}`);
-				if (lugarPedido === null) {
-					break;
-				}
-
-				pedidos += `Nombre: ${nombrePedido}\nNumero: ${numeroPedido}\nLugar: ${lugarPedido}\n\n`;
-				numPedido++;
-			}
-
-			if (numPedido > 1) {
-				const downloadLink = document.createElement("a");
-				const file = new Blob([pedidos], {type: "text/plain"});
-				downloadLink.href = URL.createObjectURL(file);
-				downloadLink.download = `${vendedor}_pedidos.txt`;
-				document.body.appendChild(downloadLink);
-				downloadLink.click();
-			}
+			// Crear un enlace para descargar el archivo
+			var link = document.createElement("a");
+			link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
+			link.download = "datos.csv";
+			link.click();
 		}
 	</script>
-
 </body>
 </html>
